@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Adhirudh – Foam Dyeing</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: linear-gradient(-45deg, #0a2d0a, #1a5a1a, #2d8a2d, #0f3d0f, #1a6b1a);
+      background-size: 500% 500%;
+      animation: greenShiftGlobal 18s ease infinite;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    @keyframes greenShiftGlobal {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 100% 0%; }
+      50% { background-position: 100% 100%; }
+      75% { background-position: 0% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body.fade-out {
+      opacity: 0;
+      transition: opacity 0.4s ease-out;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 2px solid rgba(34, 139, 34, 0.3);
+      padding: 20px 6vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #32CD32;
+      text-shadow: 0 0 10px rgba(50, 205, 50, 0.4);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      position: relative;
+    }
+
+    .top-link {
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .top-link:hover { 
+      color: #32CD32;
+      text-shadow: 0 0 8px rgba(50, 205, 50, 0.5);
+    }
+
+    .menu-toggle {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 2px solid rgba(50, 205, 50, 0.6);
+      background: rgba(15, 23, 42, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .menu-toggle:hover {
+      border-color: #32CD32;
+      background: rgba(34, 139, 34, 0.2);
+      box-shadow: 0 0 12px rgba(50, 205, 50, 0.3);
+    }
+
+    .menu-lines {
+      width: 16px;
+      height: 2px;
+      background: #e5e7eb;
+      position: relative;
+      border-radius: 999px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .menu-lines::before,
+    .menu-lines::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 16px;
+      height: 2px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .menu-lines::before { top: -5px; }
+    .menu-lines::after  { top: 5px; }
+
+    .menu-toggle.open .menu-lines {
+      background: transparent;
+    }
+
+    .menu-toggle.open .menu-lines::before {
+      transform: translateY(5px) rotate(45deg);
+    }
+
+    .menu-toggle.open .menu-lines::after {
+      transform: translateY(-5px) rotate(-45deg);
+    }
+
+    .menu-dropdown {
+      position: absolute;
+      top: 54px;
+      right: 0;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 16px;
+      border: 1px solid rgba(50, 205, 50, 0.4);
+      box-shadow: 0 24px 60px rgba(34, 139, 34, 0.3);
+      padding: 10px 0;
+      width: 220px;
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .menu-dropdown.open {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .menu-item {
+      padding: 9px 16px;
+      font-size: 0.9rem;
+      color: rgba(229, 231, 235, 0.95);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .menu-item:hover {
+      background: rgba(34, 139, 34, 0.5);
+      color: #32CD32;
+    }
+
+    main { padding-top: 70px; }
+
+    section.block {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 80px 6vw;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    section.block.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(-45deg, #0a2d0a, #1a4a1a, #2d7a2d, #0f3a0f);
+      background-size: 400% 400%;
+      animation: heroFlow 25s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes heroFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(50, 205, 50, 0.15), transparent);
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(34, 139, 34, 0.15), transparent);
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 22s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(30px) scale(1.05); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 900;
+      margin-bottom: 20px;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      text-shadow: 0 4px 20px rgba(50, 205, 50, 0.2);
+    }
+
+    .hero-highlight {
+      background: linear-gradient(90deg, #228B22, #32CD32, #228B22);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: highlightShift 4s ease infinite;
+    }
+
+    @keyframes highlightShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.85);
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-inline: auto;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 36px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #228B22, #32CD32);
+      color: white;
+      box-shadow: 0 12px 30px rgba(34, 139, 34, 0.5);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 45px rgba(50, 205, 50, 0.7);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid rgba(50, 205, 50, 0.6);
+      color: #32CD32;
+      box-shadow: 0 0 12px rgba(50, 205, 50, 0.1);
+    }
+
+    .btn-outline:hover {
+      border-color: #32CD32;
+      background: rgba(50, 205, 50, 0.1);
+      box-shadow: 0 0 20px rgba(50, 205, 50, 0.3);
+    }
+
+    /* Story Section */
+    .story {
+      background: linear-gradient(-45deg, #0f2d0f, #1a4a1a, #2a7a2a, #0f3a0f);
+      background-size: 400% 400%;
+      animation: storyFlow 28s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes storyFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .story::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(50, 205, 50, 0.08), transparent);
+      border-radius: 50%;
+      filter: blur(100px);
+      animation: orb1 30s ease-in-out infinite;
+    }
+
+    @keyframes orb1 {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-50px, -50px); }
+    }
+
+    .story-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 60px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .story-title {
+      font-size: 2.6rem;
+      font-weight: 900;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 15px rgba(50, 205, 50, 0.15);
+    }
+
+    .story-text p {
+      font-size: 1.02rem;
+      color: rgba(255, 255, 255, 0.86);
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+
+    .story-highlight {
+      background: linear-gradient(90deg, #228B22, #32CD32, #228B22);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+      animation: highlightShift 4s ease infinite;
+    }
+
+    .story-points {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 14px;
+      border: 1px solid rgba(34, 139, 34, 0.4);
+      padding: 22px 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(34, 139, 34, 0.1);
+    }
+
+    .story-points h3 {
+      font-size: 1.15rem;
+      margin-bottom: 10px;
+      color: #32CD32;
+    }
+
+    .story-points ul { list-style: none; }
+
+    .story-points li {
+      font-size: 0.95rem;
+      color: rgba(209, 213, 219, 0.95);
+      margin-bottom: 8px;
+      padding-left: 12px;
+      position: relative;
+    }
+
+    .story-points li::before {
+      content: "•";
+      color: #228B22;
+      position: absolute;
+      left: 0;
+    }
+
+    /* Values Section */
+    .values {
+      background: linear-gradient(-45deg, #0a2d0a, #1a5a1a, #2d8a2d, #0f3d0f, #1a6b1a);
+      background-size: 600% 600%;
+      animation: valuesFlow 30s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes valuesFlow {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 100% 0%; }
+      50% { background-position: 100% 100%; }
+      75% { background-position: 0% 100%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .values::before,
+    .values::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.1;
+    }
+
+    .values::before {
+      top: 10%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(50, 205, 50, 0.3), transparent);
+      animation: float 25s ease-in-out infinite;
+    }
+
+    .values::after {
+      bottom: 5%;
+      right: -5%;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(34, 139, 34, 0.3), transparent);
+      animation: float 28s ease-in-out infinite reverse;
+    }
+
+    .values-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .values-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 40px;
+      letter-spacing: -1px;
+      color: #ffffff;
+      text-shadow: 0 2px 15px rgba(50, 205, 50, 0.2);
+    }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: 1fr;
+      gap: 2rem;
+    }
+
+    .value-card {
+      background: linear-gradient(135deg, rgba(34, 139, 34, 0.15), rgba(15, 25, 15, 0.2));
+      border: 1.5px solid rgba(50, 205, 50, 0.35);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.35s ease;
+      min-height: 260px;
+      min-width: 300px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .value-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(50, 205, 50, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .value-card:hover::before {
+      left: 100%;
+    }
+
+    .value-card:hover {
+      border-color: rgba(50, 205, 50, 0.7);
+      box-shadow: 0 12px 40px rgba(50, 205, 50, 0.25), inset 0 0 20px rgba(50, 205, 50, 0.05);
+      transform: translateY(-4px);
+    }
+
+    .value-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #32CD32;
+    }
+
+    .value-card p {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+
+    .preview {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+      opacity: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .value-card.expanded .preview {
+      max-height: 300px;
+      opacity: 1;
+      margin-top: 1rem;
+    }
+
+    .value-card.expanded {
+      min-height: 420px;
+      grid-column: span 2;
+      border-color: rgba(50, 205, 50, 0.8);
+      box-shadow: 0 20px 50px rgba(50, 205, 50, 0.3);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 1.8rem;
+      color: #ff6b6b;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+      z-index: 10;
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .value-card.expanded .close-btn {
+      opacity: 1;
+    }
+
+    .preview h4 {
+      font-size: 1.1rem;
+      margin-bottom: 0.8rem;
+      color: #32CD32;
+      font-weight: 600;
+    }
+
+    .preview ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    .preview li {
+      padding: 0.5rem 0 0.5rem 16px;
+      border-bottom: 1px solid rgba(50, 205, 50, 0.2);
+      position: relative;
+    }
+
+    .preview li::before {
+      content: "→";
+      color: #228B22;
+      position: absolute;
+      left: 0;
+    }
+
+    .more-info {
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.9rem;
+    }
+
+    footer {
+      padding: 22px 6vw 26px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(34, 139, 34, 0.2);
+      background: rgba(10, 10, 10, 0.5);
+    }
+
+    /* Arrow buttons */
+    .arrow-nav {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 999;
+    }
+
+    .arrow-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 2px solid rgba(50, 205, 50, 0.5);
+      background: rgba(15, 23, 42, 0.85);
+      color: #32CD32;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(34, 139, 34, 0.2);
+      transition: all 0.2s ease;
+      font-size: 18px;
+    }
+
+    .arrow-btn:hover {
+      background: rgba(34, 139, 34, 0.3);
+      border-color: #32CD32;
+      box-shadow: 0 0 20px rgba(50, 205, 50, 0.5);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 900px) {
+      .story-inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 32px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 14px 4vw; }
+      .top-link { display: none; }
+
+      section.block { padding: 80px 4vw; min-height: auto; }
+
+      .hero { padding-top: 80px; }
+      .hero h1 { font-size: 2.1rem; }
+      .hero p  { font-size: 1rem; }
+
+      .values-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .value-card.expanded {
+        grid-column: span 1;
+      }
+
+      .btn { width: 100%; }
+      .arrow-nav { right: 12px; bottom: 12px; }
+    }
+
+    @media (max-width: 540px) {
+      .values-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">Team Adhirudh</div>
+    <div class="nav-right">
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Menu">
+        <span class="menu-lines"></span>
+      </button>
+      <div class="menu-dropdown" id="menuDropdown">
+        <div class="menu-item" onclick="scrollToWhy()">Why We Started</div>
+        <div class="menu-item" onclick="smoothNavigate('about.html')">About Us</div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Block 1 -->
+    <section class="block hero" id="top">
+      <div class="hero-inner">
+        <h1>
+          <span class="hero-highlight">Foam </span>The Future<br />
+          <span class="hero-highlight">Form </span> The Future
+        </h1>
+        <p>
+          Say Goodbye To Traditional Dyeing Methods.
+        </p>
+        <div class="hero-buttons">
+        <button class="btn btn-outline" type="button"
+                onclick="scrollToWhy()">
+            Why We Started
+        </button>
+        <button class="btn btn-outline" type="button"
+                onclick="smoothNavigate('about.html')">
+            About Us
+        </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Block 2 -->
+    <section class="block story" id="story">
+      <div class="story-inner">
+        <div class="story-text">
+          <h2 class="story-title">Why this website exists</h2>
+          <p>
+            Most students do not fail because they are lazy; they fail because their material is messy.
+            Different styles, missing chapters, unclear explanations and outdated PDFs make every revision session heavier than it should be.
+          </p>
+          <p>
+            StudyNotes started from that frustration. The idea was simple:
+            <span class="story-highlight">if one student has already written clean, chapter-wise notes that work, there is no reason others should start from zero.</span>
+          </p>
+          <p>
+            Every subject is broken into chapters, every chapter is rewritten for clarity, and every page is treated as something you should be able to read at 2 AM before an exam and still understand.
+          </p>
+        </div>
+        <div class="story-points">
+          <h3>What we focus on</h3>
+          <ul>
+            <li>Removing duplicate, confusing, or low-value content.</li>
+            <li>Keeping examples that actually reflect exam patterns and common tricks.</li>
+            <li>Making each chapter self-contained so you are never hunting through five files to finish one topic.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Block 3 -->
+    <section class="block values" id="values">
+      <div class="values-inner">
+        <h2 class="values-title">Our Solutions</h2>
+        <div class="values-grid">
+          
+          <div class="value-card" onclick="togglePreview(this)">
+            <h3>New Foam Dyeing Machinery</h3>
+            <p>Since one of the main issue with the lack of waterless dyeing in our country isn't just a capital issue but also lack of knowledge and right implementation, we are also going to act as an aggregator to existing medium to large scale dyeing industries by selling them the most up-to-date machinery with the trusted and reliable manufacturers</p>
+            <span class="close-btn" onclick="closePreview(event)">&times;</span>
+            <div class="preview">
+              <h4>Key Benefits</h4>
+              <ul>
+                
+              </ul>
+              <p class="more-info"></p>
+            </div>
+          </div>
+          
+          <div class="value-card" onclick="togglePreview(this)">
+            <h3>Retrofit Foam Finishing Machinery</h3>
+            <p>We can retrofit foam generators and applicators in the place of existing padders which serve the purpose of applying liquid finishes (dyes, chemicals) as this way the fabric carries much less water pickup (15-20% as compared to the traditional 70%), Saving on energy costs at the drying stage, and requiring less chemicals as well as speeding up the entire finishing process by upto 2 times.</p>
+            <span class="close-btn" onclick="closePreview(event)">&times;</span>
+            <div class="preview">
+              <h4>Key Benefits</h4>
+              <ul>
+                
+              </ul>
+              <p class="more-info"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Arrow navigation -->
+  <div class="arrow-nav">
+    <button class="arrow-btn" id="arrow-up">▲</button>
+    <button class="arrow-btn" id="arrow-down">▼</button>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Team Adhirudh. All rights reserved.</p>
+  </footer>
+
+  <script>
+  function smoothNavigate(url) {
+    document.body.classList.add('fade-out');
+    setTimeout(() => {
+      window.location.href = url;
+    }, 400);
+  }
+
+  function navigateTo(url) {
+    smoothNavigate(url);
+  }
+
+  function scrollToWhy() {
+    const el = document.getElementById('story');
+    if (!el) return;
+    closeMenu();
+    const rect = el.getBoundingClientRect();
+    const targetY = rect.top + window.scrollY - 60;
+    smoothScrollTo(targetY, 800);
+  }
+
+  const menuToggle = document.getElementById('menuToggle');
+  const menuDropdown = document.getElementById('menuDropdown');
+
+  function closeMenu() {
+    menuToggle.classList.remove('open');
+    menuDropdown.classList.remove('open');
+  }
+
+  menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('open');
+    menuDropdown.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menuDropdown.contains(e.target) && !menuToggle.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#')) return;
+
+    if (link.hasAttribute('onclick')) return;
+
+    e.preventDefault();
+    smoothNavigate(href);
+  });
+
+  const blocks = document.querySelectorAll('section.block');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+  blocks.forEach(b => observer.observe(b));
+
+  const orderedBlocks = Array.from(blocks);
+
+  function smoothScrollTo(targetY, duration) {
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    const startTime = performance.now();
+    const total = duration;
+
+    function easeInOutQuad(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / total, 1);
+      const eased = easeInOutQuad(progress);
+      window.scrollTo(0, startY + distance * eased);
+
+      if (elapsed < total) {
+        requestAnimationFrame(step);
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  function scrollToBlockIdx(idx) {
+    if (idx < 0 || idx >= orderedBlocks.length) return;
+    const rect = orderedBlocks[idx].getBoundingClientRect();
+    const targetY = rect.top + window.scrollY - 60;
+    smoothScrollTo(targetY, 800);
+  }
+
+  function currentBlockIndex() {
+    let bestIndex = 0;
+    let bestDistance = Infinity;
+    const viewportCenter = window.scrollY + window.innerHeight / 2;
+    orderedBlocks.forEach((block, i) => {
+      const rect = block.getBoundingClientRect();
+      const blockCenter = rect.top + window.scrollY + rect.height / 2;
+      const distance = Math.abs(blockCenter - viewportCenter);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestIndex = i;
+      }
+    });
+    return bestIndex;
+  }
+
+  document.getElementById('arrow-up').addEventListener('click', () => {
+    const idx = currentBlockIndex();
+    scrollToBlockIdx(idx - 1);
+  });
+
+  document.getElementById('arrow-down').addEventListener('click', () => {
+    const idx = currentBlockIndex();
+    scrollToBlockIdx(idx + 1);
+  });
+
+  function togglePreview(card) {
+    document.querySelectorAll('.value-card').forEach(c => {
+      if (c !== card) c.classList.remove('expanded');
+    });
+    card.classList.toggle('expanded');
+  }
+
+  function closePreview(event) {
+    event.stopPropagation();
+    event.currentTarget.parentElement.classList.remove('expanded');
+  }
+</script>
+
+</body>
+</html>
+
+
+
